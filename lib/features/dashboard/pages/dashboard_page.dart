@@ -5,6 +5,8 @@ import '../../auth/repositories/auth_repository.dart';
 import '../../upload/controllers/upload_controller.dart';
 import '../../upload/pages/upload_page.dart';
 import '../../auth/pages/login_page.dart';
+import '../../product_list/controllers/product_list_controller.dart';
+import '../../product_list/pages/product_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -13,10 +15,10 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-
 class _DashboardPageState extends State<DashboardPage> {
   final _authRepository = AuthRepository();
   final _uploadController = UploadController();
+  final _productListController = ProductListController();
   int _currentTab = 0;
   Timer? _sessionCheckTimer;
 
@@ -35,6 +37,7 @@ class _DashboardPageState extends State<DashboardPage> {
   void dispose() {
     _sessionCheckTimer?.cancel();
     _uploadController.dispose();
+    _productListController.dispose();
     super.dispose();
   }
 
@@ -93,13 +96,11 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildTabContent() {
-    // Placeholder sementara. Nanti diganti UploadPage() & ProductListPage()
-    // begitu 2 fitur itu udah kita buat.
     switch (_currentTab) {
       case 0:
         return UploadPage(controller: _uploadController);
       case 1:
-        return const Center(child: Text('Halaman Daftar Produk (belum dibuat)'));
+        return ProductListPage(controller: _productListController);
       default:
         return const SizedBox.shrink();
     }
