@@ -12,7 +12,9 @@ dependencies:
   dio: ^5.11.0
   flutter:
     sdk: flutter
+  forui: ^0.26.0
   image_picker: ^1.2.3
+  material_ui: ^1.1.0
   shared_preferences: ^2.5.5
 
 dev_dependencies:

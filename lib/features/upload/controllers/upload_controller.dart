@@ -17,9 +17,9 @@ class UploadController extends ChangeNotifier {
   String? get resultUrl => _resultUrl;
   String? get errorMessage => _errorMessage;
 
-  Future<void> pickImage() async {
+  Future<void> pickImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
+      source: source,
       imageQuality: 80,
     );
 
