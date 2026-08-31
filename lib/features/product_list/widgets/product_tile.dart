@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/product_model.dart';
 
@@ -9,36 +10,54 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: CachedNetworkImage(
-            imageUrl: product.imageUrl,
-            width: 56,
-            height: 56,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const SizedBox(
-              width: 56,
-              height: 56,
-              child: Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
+    final theme = context.theme;
+    return FCard(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
+                imageUrl: product.imageUrl,
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                ),
+                errorWidget: (context, url, error) => SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: Icon(FLucideIcons.imageOff, color: theme.colors.mutedForeground),
+                ),
               ),
             ),
-            errorWidget: (context, url, error) => const SizedBox(
-              width: 56,
-              height: 56,
-              child: Icon(Icons.broken_image_outlined, color: Colors.grey),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.typography.body.md,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'ID: ${product.id}',
+                    style: theme.typography.body.sm.copyWith(
+                      color: theme.colors.mutedForeground,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-        title: Text(
-          product.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text('ID: ${product.id}'),
       ),
     );
   }

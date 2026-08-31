@@ -15,12 +15,11 @@ class AuthException implements Exception {
 class AuthRepository {
   final Dio _dio = ApiClient.instance.dio;
 
-  Future<UserModel> login({
+  Future<void> login({
     required String email,
     required String password,
   }) async {
     try {
-      // Langkah 1: kirim email & password, minta token
       final loginResponse = await _dio.post(
         ApiConstants.login,
         data: {
@@ -32,25 +31,22 @@ class AuthRepository {
       final accessToken = loginResponse.data['access_token'] as String;
       final refreshToken = loginResponse.data['refresh_token'] as String;
 
-      // Langkah 2: simpan token ke storage lokal
       await SessionManager.instance.saveSession(
         accessToken: accessToken,
         refreshToken: refreshToken,
         email: email,
       );
-
-      // Langkah 3: ambil data profil user (token otomatis
-      // ditempelin sama interceptor di ApiClient)
-      final profileResponse = await _dio.get(ApiConstants.profile);
-
-      // Langkah 4: ubah JSON jadi UserModel
-      return UserModel.fromJson(profileResponse.data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401 || e.response?.statusCode == 400) {
         throw AuthException('Email atau password salah.');
       }
       throw AuthException('Gagal login. Periksa koneksi internet kamu.');
     }
+  }
+
+  Future<UserModel> getProfile() async {
+    final response = await _dio.get(ApiConstants.profile);
+    return UserModel.fromJson(response.data);
   }
 
   Future<void> logout() async {

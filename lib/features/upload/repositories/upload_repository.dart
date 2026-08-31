@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import '../models/upload_result.dart';
 
-// TODO: pindahkan ke tempat yang lebih aman (misal file .env) sebelum
-// project ini di-push ke repo Git publik.
 const String _imgbbApiKey = '8df53c18cf344c165b7f57f8a00669a3';
 const String _imgbbUploadUrl = 'https://api.imgbb.com/1/upload';
 
@@ -17,10 +15,8 @@ class UploadException implements Exception {
 }
 
 class UploadRepository {
-  // Sengaja pakai Dio() polos, BUKAN ApiClient.instance.dio.
   final Dio _dio = Dio();
 
-  /// Metode 1: kirim file gambar asli (binary) lewat multipart/form-data.
   Future<UploadResult> uploadMultipart(File imageFile) async {
     try {
       final formData = FormData.fromMap({

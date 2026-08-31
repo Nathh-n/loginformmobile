@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ImagePreview extends StatelessWidget {
   final File? imageFile;
@@ -8,16 +9,21 @@ class ImagePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
     return AspectRatio(
       aspectRatio: 1,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: theme.colors.border),
           borderRadius: BorderRadius.circular(12),
         ),
         child: imageFile == null
-            ? const Center(
-                child: Icon(Icons.image_outlined, size: 48, color: Colors.grey),
+            ? Center(
+                child: Icon(
+                  FLucideIcons.image,
+                  size: 48,
+                  color: theme.colors.mutedForeground,
+                ),
               )
             : ClipRRect(
                 borderRadius: BorderRadius.circular(12),

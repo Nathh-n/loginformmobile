@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
+import 'package:material_ui/material_ui.dart';
 import '../controllers/product_list_controller.dart';
 import '../widgets/product_tile.dart';
 
@@ -48,6 +49,24 @@ class _ProductListPageState extends State<ProductListPage> {
       builder: (context, _) {
         final controller = widget.controller;
 
+        // Empty state: belum ada produk, tidak sedang loading, dan tidak error.
+        if (controller.items.isEmpty &&
+            !controller.isLoading &&
+            controller.errorMessage == null) {
+          return RefreshIndicator(
+            onRefresh: controller.refresh,
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: _buildEmptyState(controller),
+                ),
+              ),
+            ),
+          );
+        }
+
         return RefreshIndicator(
           onRefresh: controller.refresh,
           child: ListView.builder(
@@ -59,11 +78,51 @@ class _ProductListPageState extends State<ProductListPage> {
               if (index == controller.items.length) {
                 return _buildFooter(controller);
               }
-              return ProductTile(product: controller.items[index]);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: ProductTile(product: controller.items[index]),
+              );
             },
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState(ProductListController controller) {
+    final theme = context.theme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              FLucideIcons.inbox,
+              size: 48,
+              color: theme.colors.mutedForeground,
+            ),
+            const SizedBox(height: 12),
+            Text('Belum ada produk', style: theme.typography.body.lg),
+            const SizedBox(height: 4),
+            Text(
+              'Coba muat ulang untuk memuat data',
+              textAlign: TextAlign.center,
+              style: theme.typography.body.sm.copyWith(
+                color: theme.colors.mutedForeground,
+              ),
+            ),
+            const SizedBox(height: 16),
+            FButton(
+              variant: FButtonVariant.secondary,
+              mainAxisSize: MainAxisSize.min,
+              onPress: controller.refresh,
+              prefix: const Icon(FLucideIcons.refreshCw),
+              child: const Text('Muat Ulang'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -74,7 +133,7 @@ class _ProductListPageState extends State<ProductListPage> {
         child: Center(
           child: Text(
             controller.errorMessage!,
-            style: const TextStyle(color: Colors.red),
+            style: TextStyle(color: context.theme.colors.destructive),
           ),
         ),
       );

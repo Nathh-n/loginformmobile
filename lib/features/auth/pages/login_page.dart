@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
+import 'package:material_ui/material_ui.dart';
 import '../repositories/auth_repository.dart';
 import '../../dashboard/pages/dashboard_page.dart';
 
@@ -16,7 +17,6 @@ class _LoginPageState extends State<LoginPage> {
   final _authRepository = AuthRepository();
 
   bool _isLoading = false;
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -60,14 +60,16 @@ class _LoginPageState extends State<LoginPage> {
 
       if (!mounted) return;
 
-      // Sementara: placeholder. Nanti diganti DashboardPage.
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const DashboardPage()),
       );
     } on AuthException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
+      showFToast(
+        context: context,
+        variant: FToastVariant.destructive,
+        title: const Text('Login Gagal'),
+        description: Text(e.message),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -76,8 +78,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+    return FScaffold(
+      childPad: false,
+      child: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -87,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.lock_outline, size: 64),
+                  const Icon(FLucideIcons.lockKeyhole, size: 64),
                   const SizedBox(height: 16),
                   Text(
                     'Masuk ke Akunmu',
@@ -95,43 +98,26 @@ class _LoginPageState extends State<LoginPage> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 32),
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: _validateEmail,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(),
+                  FTextFormField.email(
+                    control: FTextFieldControl.managed(
+                      controller: _emailController,
                     ),
+                    label: const Text('Email'),
+                    hint: 'contoh@mail.com',
+                    validator: _validateEmail,
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    validator: _validatePassword,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() => _obscurePassword = !_obscurePassword);
-                        },
-                      ),
+                  FTextFormField.password(
+                    control: FTextFieldControl.managed(
+                      controller: _passwordController,
                     ),
+                    label: const Text('Password'),
+                    hint: 'Minimal 6 karakter',
+                    validator: _validatePassword,
                   ),
                   const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: _isLoading ? null : _handleLogin,
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
+                  FButton(
+                    onPress: _isLoading ? null : _handleLogin,
                     child: _isLoading
                         ? const SizedBox(
                             height: 20,
