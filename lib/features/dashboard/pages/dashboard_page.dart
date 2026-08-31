@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/storage/session_manager.dart';
 import '../../auth/repositories/auth_repository.dart';
+import '../../upload/controllers/upload_controller.dart';
+import '../../upload/pages/upload_page.dart';
 import '../../auth/pages/login_page.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -11,8 +13,10 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
+
 class _DashboardPageState extends State<DashboardPage> {
   final _authRepository = AuthRepository();
+  final _uploadController = UploadController();
   int _currentTab = 0;
   Timer? _sessionCheckTimer;
 
@@ -30,6 +34,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void dispose() {
     _sessionCheckTimer?.cancel();
+    _uploadController.dispose();
     super.dispose();
   }
 
@@ -92,7 +97,7 @@ class _DashboardPageState extends State<DashboardPage> {
     // begitu 2 fitur itu udah kita buat.
     switch (_currentTab) {
       case 0:
-        return const Center(child: Text('Halaman Upload (belum dibuat)'));
+        return UploadPage(controller: _uploadController);
       case 1:
         return const Center(child: Text('Halaman Daftar Produk (belum dibuat)'));
       default:
